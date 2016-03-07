@@ -88,4 +88,16 @@ class Message extends Eloquent
     {
         return $this->participants()->where('user_id', '!=', $this->user_id);
     }
+
+
+    protected $morphClass = 'message';
+    /**
+     * Get all of the staff member's photos.
+     */
+    public function likes()
+    {
+        return $this->morphMany('App\Like', 'likeable');
+    }
+
+
 }

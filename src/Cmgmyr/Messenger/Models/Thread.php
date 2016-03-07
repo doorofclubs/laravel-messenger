@@ -371,10 +371,13 @@ class Thread extends Eloquent
 
 
     protected $types = [
-        'thread' => 'App\Thread',
+        'thread' => 'Cmgmyr\Messenger\Models\Thread',
+        'message' => 'Cmgmyr\Messenger\Models\Message',
         //'newsfeed_thread' => 'App\NewsfeedThread',
-        'opp_push' => 'App\OppPush',
-        'organization' => 'App\Organization'
+        'opp_push' => '\App\OppPush',
+        'school' => '\App\School',
+        'opp' => '\App\Opp',
+        'organization' => '\App\Organization'
     ];
 
     public function getThreadableTypeAttribute($type) {
@@ -387,6 +390,7 @@ class Thread extends Eloquent
         // which is always safe, because new 'class'
         // will work just the same as new 'Class'
     }
+
 
 
 }
