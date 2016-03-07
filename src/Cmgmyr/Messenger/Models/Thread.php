@@ -22,7 +22,7 @@ class Thread extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['subject'];
+    protected $fillable = ['subject', 'threadable_id', 'threadable_type'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -48,15 +48,8 @@ class Thread extends Eloquent
         return $this->hasMany('Cmgmyr\Messenger\Models\Message');
     }
 
-    /**
-     * Returns the latest message object from a thread (improved from below)
-     *
-     * @return \Cmgmyr\Messenger\Models\Message
-     */
-    public function latestMessage()
-    {
-        return $this->hasOne('Cmgmyr\Messenger\Models\Message', 'id', 'last_message_id');
-    }
+
+
 
     /**
      * Returns the latest message from a thread
@@ -77,6 +70,20 @@ class Thread extends Eloquent
     {
         return $this->hasMany('Cmgmyr\Messenger\Models\Participant');
     }
+
+    /**
+     * Participants relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function participant_users()
+    {
+        //return $this->participants()->join('users', 'participants.user_id', '=', 'users.id');
+
+        return $this->hasManyThrough('Cmgmyr\Messenger\Models\Participant','App\User', 'id', 'user_id');
+    }
+
+
 
     /**
      * Returns the user object that created the thread
@@ -335,4 +342,36 @@ class Thread extends Eloquent
         $userModel = Config::get('messenger.user_model');
         return $this->usersTable = (new $userModel)->getTable();
     }
+
+
+    //http://stackoverflow.com/questions/27866020/laravel-returning-the-namespaced-owner-of-a-polymorphic-relation/27909753#27909753
+    /**
+     * Get all of the owning threadable models.
+     */
+    public function threadable()
+    {
+        return $this->morphTo();
+    }
+
+
+
+    protected $types = [
+        'newsfeed_thread' => 'App\NewsfeedThread',
+        'thread' => 'App\Thread',
+        'opp_push' => 'App\OppPush',
+        'organization' => 'App\Organization'
+    ];
+
+    public function getThreadableTypeAttribute($type) {
+        // transform to lower case
+        $type = strtolower($type);
+
+        // to make sure this returns value from the array
+        return array_get($this->types, $type, $type);
+
+        // which is always safe, because new 'class'
+        // will work just the same as new 'Class'
+    }
+
+
 }
