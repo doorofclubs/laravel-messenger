@@ -348,6 +348,21 @@ class Thread extends Eloquent
     /**
      * Get all of the owning threadable models.
      */
+   /**
+     * User relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function opens()
+    {
+        return $this->hasMany('App\SendgridOppEvent', 'newsfeed_id', 'id');
+    }
+
+
+    //http://stackoverflow.com/questions/27866020/laravel-returning-the-namespaced-owner-of-a-polymorphic-relation/27909753#27909753
+    /**
+     * Get all of the owning threadable models.
+     */
     public function threadable()
     {
         return $this->morphTo();
@@ -356,8 +371,8 @@ class Thread extends Eloquent
 
 
     protected $types = [
-        'newsfeed_thread' => 'App\NewsfeedThread',
         'thread' => 'App\Thread',
+        //'newsfeed_thread' => 'App\NewsfeedThread',
         'opp_push' => 'App\OppPush',
         'organization' => 'App\Organization'
     ];
